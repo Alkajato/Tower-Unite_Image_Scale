@@ -83,6 +83,7 @@ fn app(cx: Scope) -> Element {
             margin_left: DIV_MARGIN,
             input {
                 value: "Paste URL here",
+                autofocus: "",
                 inputmode: "url",
                 style: "width: 100%",
             }
