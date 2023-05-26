@@ -37,6 +37,25 @@ fn get_resolution(url: &str) -> Result<(f32, f32), String> {
     Ok((image.width() as f32, image.height() as f32))
 }
 
+fn url_to_scaling(url: &str) -> Result<(f32, f32), String> {
+    match get_resolution(url) {
+        Err(error_msg) => Err(error_msg),
+        Ok((width, height)) => {
+            let x_scale;
+            let y_scale;
+            if width < height {
+                x_scale = width / height;
+                y_scale = 1.0;
+            } else {
+                y_scale = height / width;
+                x_scale = 1.0;
+            }
+
+            Ok((x_scale, y_scale))
+        }
+    }
+}
+
 fn main() {
     dioxus_desktop::launch(app);
 
@@ -47,17 +66,14 @@ fn main() {
         println!("Provide an image URL: ");
         let input = get_input();
 
-        let result = get_resolution(&input);
-        if let Some(error_msg) = result.as_ref().err() {
-            println!("{error_msg}\n");
-        } else {
-            let (width, height) = result.unwrap();
-            if width < height {
-                let new_x = width / height;
-                println!("The X Scale to use is {new_x}\n");
-            } else {
-                let new_y = height / width;
-                println!("The Y Scale to use is {new_y}\n");
+        match url_to_scaling(&input) {
+            Err(error_msg) => println!("{error_msg}\n"),
+            Ok((x_scale, y_scale)) => {
+                if x_scale == 1.0 {
+                    println!("Scale Y dimensions by {y_scale}");
+                } else {
+                    println!("Scale X dimensions by {x_scale}");
+                }
             }
         }
     }
