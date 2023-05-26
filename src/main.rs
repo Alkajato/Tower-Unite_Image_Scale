@@ -77,6 +77,7 @@ fn app(cx: Scope) -> Element {
     let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
 
     cx.render(rsx! {
+
         div {
             style: "width: 50%; justify-self: center;",
             margin_left: DIV_MARGIN,
@@ -84,6 +85,19 @@ fn app(cx: Scope) -> Element {
                 value: "Paste URL here",
                 inputmode: "url",
                 style: "width: 100%",
+            }
+            div {
+                style: "float: left",
+                input {
+                    value: "1.0",
+                    inputmode: "decimal",
+                    style: "text-align: center",
+                }
+                input {
+                    value: "1.0",
+                    inputmode: "decimal",
+                    style: "text-align: center",
+                }
             }
         }
     })
