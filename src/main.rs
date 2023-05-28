@@ -98,10 +98,8 @@ fn app(cx: Scope) -> Element {
     let y_state = use_state(cx, || 1.0);
 
     cx.render(rsx! {
-        head {
-            style {
-                include_str!("../src/style_dark.css")
-            }
+        style {
+            include_str!("../src/style_dark.css")
         }
 
         div {
