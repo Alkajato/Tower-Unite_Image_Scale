@@ -1,4 +1,4 @@
-use const_format::concatcp;
+//use const_format::concatcp;
 use dioxus::prelude::*;
 
 fn get_input() -> String {
@@ -81,14 +81,14 @@ fn main() {
 // Things "style" can include.
 // https://developer.mozilla.org/en-US/docs/Web/CSS
 // https://stackoverflow.com/questions/42125775/reactjs-react-router-how-to-center-div
-const DIV_WIDTH_PERCENT: i32 = 50;
-const DIV_MARGIN: &str = concatcp!(DIV_WIDTH_PERCENT / 2, "%");
+// const DIV_WIDTH_PERCENT: i32 = 50;
+// const DIV_MARGIN: &str = concatcp!(DIV_WIDTH_PERCENT / 2, "%");
 
 fn app(cx: Scope) -> Element {
-    let line_container = "background-color: rgb(49, 46, 41); display: grid; width: 100%; height: 6px; padding: 2px 0px 2px 0px; margin: 2px 0px 2px 0px;";
-    let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
-    let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
-
+    // let line_container = "background-color: rgb(49, 46, 41); display: grid; width: 100%; height: 6px; padding: 2px 0px 2px 0px; margin: 2px 0px 2px 0px;";
+    // let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
+    // let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
+    
     // If url_state evaluates to a url string
     // run url_to_scaling on it to define ratio of X : Y
     // Set x_state and y_state appropriately.
@@ -98,49 +98,78 @@ fn app(cx: Scope) -> Element {
     let y_state = use_state(cx, || 1.0);
 
     cx.render(rsx! {
-        div {
-            style: "width: 50%; justify-self: center;",
-            margin_left: DIV_MARGIN,
-            input {
-                oninput: move |evt| {
-                    match url_to_scaling(&evt.value) {
-                        Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
-                        Ok((x_scale, y_scale)) => {
-                            ratio.set((x_scale, y_scale));
-
-                            println!("Input evaluated");
-                            println!("{:?}", (x_scale, y_scale));
-                        }
-                    }
-                },
-                placeholder: "Paste URL here",
-                autofocus: "",
-                inputmode: "url",
-                style: "width: 100%",
+        head {
+            style {
+                include_str!("../src/style_dark.css")
             }
+        }
+
+        div {
+            class: "body bg1",
+
             div {
-                style: "float: left",
+                class: "title",
+                "Tower Unite Image Scaler"
+            }
+
+            div {
+                class: "urlinputdiv radius bg2",
+                "Input URL"
+
                 input {
+                    class: "urlinput radius bg3",
                     oninput: move |evt| {
-                        if let Ok(num) = evt.value.parse() {
-                            x_state.set(num);
+                        match url_to_scaling(&evt.value) {
+                            Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
+                            Ok((x_scale, y_scale)) => {
+                                ratio.set((x_scale, y_scale));
+    
+                                println!("Input evaluated");
+                                println!("{:?}", (x_scale, y_scale));
+                            }
                         }
-                        println!("y_state: {y_state}");
                     },
-                    placeholder: "Input X size",
-                    inputmode: "decimal",
-                    style: "text-align: center",
+                    placeholder: "URL",
+                    autofocus: "",
+                    inputmode: "url",
                 }
-                input {
-                    oninput: move |evt| {
-                        if let Ok(num) = evt.value.parse() {
-                            y_state.set(num);
-                        }
-                        println!("x_state: {x_state}");
-                    },
-                    placeholder: "Input Y size",
-                    inputmode: "decimal",
-                    style: "text-align: center",
+            }
+
+            div {
+                class: "scaleinputdiv radius bg2",
+
+                div {
+                    style: "display: flex; flex-direction: column;",
+                    "X Scale"
+
+                    input {
+                        class: "scaleinput radius bg3",
+                        oninput: move |evt| {
+                            if let Ok(num) = evt.value.parse() {
+                                x_state.set(num);
+                            }
+                            println!("y_state: {y_state}");
+                        },
+                        placeholder: "Input X size",
+                        inputmode: "decimal",
+                    }
+                }
+                
+                div {
+                    style: "display: flex; flex-direction: column;",
+                    "Y Scale"
+
+                    input {
+                        class: "scaleinput radius",
+                        oninput: move |evt| {
+                            if let Ok(num) = evt.value.parse() {
+                                y_state.set(num);
+                            }
+                            println!("x_state: {x_state}");
+                        },
+                        placeholder: "Input Y size",
+                        inputmode: "decimal",
+                    }
                 }
             }
         }
