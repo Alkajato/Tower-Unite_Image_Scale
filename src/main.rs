@@ -92,13 +92,37 @@ fn app(cx: Scope) -> Element {
     let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
     let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
 
-    cx.render(rsx! {
+    let url_state = use_state(cx, || String::from(""));
 
+    // If url_state evaluates to a url string
+    // run url_to_scaling on it to define ratio of X : Y
+    // Set x_state and y_state appropriately.
+    let x_state = use_state(cx, || 1.0);
+    let y_state = use_state(cx, || 1.0);
+
+    cx.render(rsx! {
         div {
             style: "width: 50%; justify-self: center;",
             margin_left: DIV_MARGIN,
             input {
-                value: "Paste URL here",
+                oninput: move |evt| {
+                    println!("Input seen");
+                    match url_to_scaling(&evt.value) {
+                        Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
+                        Ok((width, height)) => {
+                            println!("Input evaluated");
+                            println!("{width} : {height}");
+                        }
+                    }
+                    // if evt.value.is_empty() {
+                    //     url_state.set(default_url_text.clone());
+                    // }
+
+                    // url_state.set(evt.value.clone());
+                    // url_state.set(evt.value.as_str());
+
+                },
+                placeholder: "Paste URL here",
                 autofocus: "",
                 inputmode: "url",
                 style: "width: 100%",
@@ -106,12 +130,12 @@ fn app(cx: Scope) -> Element {
             div {
                 style: "float: left",
                 input {
-                    value: "1.0",
+                    placeholder: "X Dimensions",
                     inputmode: "decimal",
                     style: "text-align: center",
                 }
                 input {
-                    value: "1.0",
+                    placeholder: "Y Dimensions",
                     inputmode: "decimal",
                     style: "text-align: center",
                 }
