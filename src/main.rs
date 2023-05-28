@@ -10,24 +10,21 @@ fn get_input() -> String {
 
 fn get_resolution(url: &str) -> Result<(f32, f32), String> {
     let img_bytes = reqwest::blocking::get(url);
-    if img_bytes.is_err() {
-        let error = img_bytes.err().unwrap();
+    if let Err(error) = img_bytes {
         let msg = format!("Failed getting url: \"{:?}\"", error);
 
         return Err(msg);
     }
 
     let img_bytes = img_bytes.unwrap().bytes();
-    if img_bytes.is_err() {
-        let error = img_bytes.err().unwrap();
+    if let Err(error) = img_bytes {
         let msg = format!("Failed getting data from image: \"{:?}\"", error);
 
         return Err(msg);
     }
 
     let image = image::load_from_memory(&img_bytes.unwrap());
-    if image.is_err() {
-        let error = image.err().unwrap();
+    if let Err(error) = image {
         let msg = format!("Failed to read data from image: \"{:?}\"", error);
 
         return Err(msg);
@@ -112,7 +109,7 @@ fn app(cx: Scope) -> Element {
                             ratio.set((x_scale, y_scale));
 
                             println!("Input evaluated");
-                            println!("{ratio:?}");
+                            println!("{:?}", (x_scale, y_scale));
                         }
                     }
                 },
