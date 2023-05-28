@@ -1,0 +1,74 @@
+body {
+    background-color: rgb(38, 35, 31);
+}
+
+.body { /* window shant go under 360px */
+    width: 100%;
+    min-width: 344px;
+    max-width: 1280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    color: rgb(219, 219, 219);
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.radius {
+    border-radius: 5px;
+}
+
+.bg1 {
+    background-color: rgb(38, 35, 31);
+}
+
+.bg2 {
+    background-color: rgb(52, 48, 42);
+}
+
+.bg3 {
+    background-color: rgb(81, 76, 69);
+}
+
+.title {
+    width: 100%;
+    height: 40px;
+    font-size: 30px;
+    background-color: rgb(50, 46, 40);
+    text-overflow: clip;
+}
+
+.dividerline {
+    background-color: rgb(174, 0, 255);
+    width: 100%;
+    height: 20px;
+}
+
+.urlinputdiv {
+    display: flex;
+    flex-direction: column;
+    font-size: 22px;
+    padding: 4px;
+    margin: 10px;
+    width: 70%;
+    max-width: 500px;
+}
+
+.urlinput {
+    width: 95%; /* makes input element 100% wide correctly */
+}
+
+.scaleinputdiv {
+    display: flex;
+    font-size: 22px;
+    width: 70%;
+    max-width: 300px;
+    justify-content: center;
+    margin: 10px;
+}
+
+.scaleinput {
+    width: 90%;
+}
