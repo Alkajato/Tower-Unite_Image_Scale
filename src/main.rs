@@ -88,7 +88,7 @@ fn app(cx: Scope) -> Element {
     // let line_container = "background-color: rgb(49, 46, 41); display: grid; width: 100%; height: 6px; padding: 2px 0px 2px 0px; margin: 2px 0px 2px 0px;";
     // let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
     // let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
-    
+
     // If url_state evaluates to a url string
     // run url_to_scaling on it to define ratio of X : Y
     // Set x_state and y_state appropriately.
@@ -117,19 +117,19 @@ fn app(cx: Scope) -> Element {
                 "Input URL"
 
                 input {
-                    class: "urlinput radius bg3",
+                    class: "urlinput radius",
                     oninput: move |evt| {
                         match url_to_scaling(&evt.value) {
                             Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
                             Ok((x_scale, y_scale)) => {
                                 ratio.set((x_scale, y_scale));
-    
+
                                 println!("Input evaluated");
                                 println!("{:?}", (x_scale, y_scale));
                             }
                         }
                     },
-                    placeholder: "URL",
+                    placeholder: "Paste image address",
                     autofocus: "",
                     inputmode: "url",
                 }
@@ -143,7 +143,7 @@ fn app(cx: Scope) -> Element {
                     "X Scale"
 
                     input {
-                        class: "scaleinput radius bg3",
+                        class: "scaleinput radius",
                         oninput: move |evt| {
                             if let Ok(num) = evt.value.parse() {
                                 x_state.set(num);
@@ -154,7 +154,7 @@ fn app(cx: Scope) -> Element {
                         inputmode: "decimal",
                     }
                 }
-                
+
                 div {
                     style: "display: flex; flex-direction: column;",
                     "Y Scale"
