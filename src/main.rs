@@ -11,21 +11,21 @@ fn get_input() -> String {
 fn get_resolution(url: &str) -> Result<(f32, f32), String> {
     let img_bytes = reqwest::blocking::get(url);
     if let Err(error) = img_bytes {
-        let msg = format!("Failed getting url: \"{:?}\"", error);
+        let msg = format!("Failed getting url: \"{error:?}\"");
 
         return Err(msg);
     }
 
     let img_bytes = img_bytes.unwrap().bytes();
     if let Err(error) = img_bytes {
-        let msg = format!("Failed getting data from image: \"{:?}\"", error);
+        let msg = format!("Failed getting data from image: \"{error:?}\"");
 
         return Err(msg);
     }
 
     let image = image::load_from_memory(&img_bytes.unwrap());
     if let Err(error) = image {
-        let msg = format!("Failed to read data from image: \"{:?}\"", error);
+        let msg = format!("Failed to read data from image: \"{error:?}\"");
 
         return Err(msg);
     }
