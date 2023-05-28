@@ -106,12 +106,11 @@ fn app(cx: Scope) -> Element {
             margin_left: DIV_MARGIN,
             input {
                 oninput: move |evt| {
-                    println!("Input seen");
                     match url_to_scaling(&evt.value) {
                         Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
-                        Ok((width, height)) => {
+                        Ok((x_scale, y_scale)) => {
                             println!("Input evaluated");
-                            println!("{width} : {height}");
+                            println!("{x_scale}:{y_scale}");
                         }
                     }
                     // if evt.value.is_empty() {
@@ -130,11 +129,23 @@ fn app(cx: Scope) -> Element {
             div {
                 style: "float: left",
                 input {
+                    oninput: move |evt| {
+                        if let Ok(num) = evt.value.parse() {
+                            x_state.set(num);
+                        }
+                        println!("y_state: {y_state}");
+                    },
                     placeholder: "X Dimensions",
                     inputmode: "decimal",
                     style: "text-align: center",
                 }
                 input {
+                    oninput: move |evt| {
+                        if let Ok(num) = evt.value.parse() {
+                            y_state.set(num);
+                        }
+                        println!("x_state: {x_state}");
+                    },
                     placeholder: "Y Dimensions",
                     inputmode: "decimal",
                     style: "text-align: center",
