@@ -92,11 +92,11 @@ fn app(cx: Scope) -> Element {
     let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
     let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
 
-    let url_state = use_state(cx, || String::from(""));
-
     // If url_state evaluates to a url string
     // run url_to_scaling on it to define ratio of X : Y
     // Set x_state and y_state appropriately.
+    let ratio = use_state(cx, || (f32::NAN, f32::NAN));
+
     let x_state = use_state(cx, || 1.0);
     let y_state = use_state(cx, || 1.0);
 
@@ -109,17 +109,12 @@ fn app(cx: Scope) -> Element {
                     match url_to_scaling(&evt.value) {
                         Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
                         Ok((x_scale, y_scale)) => {
+                            ratio.set((x_scale, y_scale));
+
                             println!("Input evaluated");
-                            println!("{x_scale}:{y_scale}");
+                            println!("{ratio:?}");
                         }
                     }
-                    // if evt.value.is_empty() {
-                    //     url_state.set(default_url_text.clone());
-                    // }
-
-                    // url_state.set(evt.value.clone());
-                    // url_state.set(evt.value.as_str());
-
                 },
                 placeholder: "Paste URL here",
                 autofocus: "",
@@ -135,7 +130,7 @@ fn app(cx: Scope) -> Element {
                         }
                         println!("y_state: {y_state}");
                     },
-                    placeholder: "X Dimensions",
+                    placeholder: "Input X size",
                     inputmode: "decimal",
                     style: "text-align: center",
                 }
@@ -146,7 +141,7 @@ fn app(cx: Scope) -> Element {
                         }
                         println!("x_state: {x_state}");
                     },
-                    placeholder: "Y Dimensions",
+                    placeholder: "Input Y size",
                     inputmode: "decimal",
                     style: "text-align: center",
                 }
