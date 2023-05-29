@@ -81,21 +81,17 @@ fn main() {
 // Things "style" can include.
 // https://developer.mozilla.org/en-US/docs/Web/CSS
 // https://stackoverflow.com/questions/42125775/reactjs-react-router-how-to-center-div
-// const DIV_WIDTH_PERCENT: i32 = 50;
-// const DIV_MARGIN: &str = concatcp!(DIV_WIDTH_PERCENT / 2, "%");
-
 fn app(cx: Scope) -> Element {
-    // let line_container = "background-color: rgb(49, 46, 41); display: grid; width: 100%; height: 6px; padding: 2px 0px 2px 0px; margin: 2px 0px 2px 0px;";
-    // let divider_line = "background-color: rgb(119, 112, 100); text-align: center; justify-self: center; width: 60%; height: 6px;";
-    // let header_style = "color: rgb(255, 255, 255); background-color: rgb(32, 30, 27); text-align: center; position: relative; height: 100vh; width: 100%; min-width: 600px; max-width: 1280px;";
-
     // If url_state evaluates to a url string
     // run url_to_scaling on it to define ratio of X : Y
     // Set x_state and y_state appropriately.
+
+    // This link makes X greater than Y in the ratio: https://i.imgur.com/7XW1LdK.png
+    // This link makes Y greater than X in the ratio: https://i.imgur.com/LEQ7AB5.png
     let ratio = use_state(cx, || (f32::NAN, f32::NAN));
 
-    let x_state = use_state(cx, || 1.0);
-    let y_state = use_state(cx, || 1.0);
+    let x_state = use_state(cx, || String::from(""));
+    let y_state = use_state(cx, || String::from(""));
 
     cx.render(rsx! {
         style {
@@ -114,16 +110,21 @@ fn app(cx: Scope) -> Element {
                 class: "urlinputdiv radius bg2",
                 "Input URL"
 
+                // URL input struct.
                 input {
                     class: "urlinput radius",
                     oninput: move |evt| {
+                        ratio.set((f32::NAN, f32::NAN));
                         match url_to_scaling(&evt.value) {
-                            Err(error_msg) => println!("Failed to resolve scaling: {error_msg}"),
+                            Err(error_msg) => println!("Failuring to resolve scaling: {error_msg}"),
                             Ok((x_scale, y_scale)) => {
                                 ratio.set((x_scale, y_scale));
 
                                 println!("Input evaluated");
                                 println!("{:?}", (x_scale, y_scale));
+
+                                // println!("x_scale into y_scale: {}", (y_scale / x_scale) * x_scale);
+                                // println!("y_scale into x_scale: {}", (x_scale / y_scale) * y_scale); // Is this only if x > y?
                             }
                         }
                     },
@@ -140,15 +141,44 @@ fn app(cx: Scope) -> Element {
                     style: "display: flex; flex-direction: column;",
                     "X Scale"
 
+                    // X input struct.
                     input {
                         class: "scaleinput radius",
                         oninput: move |evt| {
-                            if let Ok(num) = evt.value.parse() {
-                                x_state.set(num);
+                            if evt.value.is_empty() {
+                                y_state.set(String::from(""));
                             }
-                            println!("y_state: {y_state}");
+
+                            // Share X size.
+                            x_state.set(evt.value.clone());
+
+                            // Y should change appropriately based on this new size.
+
+                            // X can be inputted to while:
+                            // ratio has both NAN || Y is empty || Y fails parsing to a f32
+
+                            // if X in ratio is 1.0, Y should be ratio.y of what is entered into X input.
+                            let (x_ratio, y_ratio) = (ratio.0, ratio.1);
+                            dbg!(x_ratio);
+                            dbg!(y_ratio);
+
+                            if x_ratio > y_ratio {
+                                println!("In x > y");
+
+                                if let Ok(x_val) = evt.value.clone().parse::<f32>() {
+                                    let y_val = format!("{}", y_ratio * x_val);
+                                    y_state.set(y_val);
+                                }
+                                // let mut new_y = Sting::from("");
+                                // let y_ratio = ratio.1;
+
+                                // y_state.set(new_y);
+                            } else {
+                                println!("In y > x");
+                            }
                         },
                         placeholder: "Input X size",
+                        value: "{x_state}",
                         inputmode: "decimal",
                     }
                 }
@@ -157,15 +187,17 @@ fn app(cx: Scope) -> Element {
                     style: "display: flex; flex-direction: column;",
                     "Y Scale"
 
+                    // Y input struct.
                     input {
                         class: "scaleinput radius",
                         oninput: move |evt| {
-                            if let Ok(num) = evt.value.parse() {
-                                y_state.set(num);
+                            if evt.value.is_empty() {
+                                x_state.set(String::from(""));
                             }
-                            println!("x_state: {x_state}");
+
                         },
                         placeholder: "Input Y size",
+                        value: "{y_state}",
                         inputmode: "decimal",
                     }
                 }
