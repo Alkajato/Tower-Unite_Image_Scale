@@ -81,13 +81,10 @@ fn main() {
 // Things "style" can include.
 // https://developer.mozilla.org/en-US/docs/Web/CSS
 // https://stackoverflow.com/questions/42125775/reactjs-react-router-how-to-center-div
-fn app(cx: Scope) -> Element {
-    // If url_state evaluates to a url string
-    // run url_to_scaling on it to define ratio of X : Y
-    // Set x_state and y_state appropriately.
 
-    // This link makes X greater than Y in the ratio: https://i.imgur.com/7XW1LdK.png
-    // This link makes Y greater than X in the ratio: https://i.imgur.com/LEQ7AB5.png
+// This link makes X greater than Y in the ratio: https://i.imgur.com/7XW1LdK.png
+// This link makes Y greater than X in the ratio: https://i.imgur.com/LEQ7AB5.png
+fn app(cx: Scope) -> Element {
     let ratio = use_state(cx, || (f32::NAN, f32::NAN));
 
     let x_state = use_state(cx, || String::from(""));
@@ -120,11 +117,7 @@ fn app(cx: Scope) -> Element {
                             Ok((x_scale, y_scale)) => {
                                 ratio.set((x_scale, y_scale));
 
-                                println!("Input evaluated");
-                                println!("{:?}", (x_scale, y_scale));
-
-                                // println!("x_scale into y_scale: {}", (y_scale / x_scale) * x_scale);
-                                // println!("y_scale into x_scale: {}", (x_scale / y_scale) * y_scale); // Is this only if x > y?
+                                println!("Evaluating {:?}", (x_scale, y_scale));
                             }
                         }
                     },
@@ -145,36 +138,31 @@ fn app(cx: Scope) -> Element {
                     input {
                         class: "scaleinput radius",
                         oninput: move |evt| {
+                            x_state.set(evt.value.clone());
                             if evt.value.is_empty() {
                                 y_state.set(String::from(""));
+                                return;
                             }
 
-                            // Share X size.
-                            x_state.set(evt.value.clone());
-
-                            // Y should change appropriately based on this new size.
-
-                            // X can be inputted to while:
-                            // ratio has both NAN || Y is empty || Y fails parsing to a f32
-
-                            // if X in ratio is 1.0, Y should be ratio.y of what is entered into X input.
-                            let (x_ratio, y_ratio) = (ratio.0, ratio.1);
-                            dbg!(x_ratio);
-                            dbg!(y_ratio);
-
-                            if x_ratio > y_ratio {
-                                println!("In x > y");
-
-                                if let Ok(x_val) = evt.value.clone().parse::<f32>() {
-                                    let y_val = format!("{}", y_ratio * x_val);
-                                    y_state.set(y_val);
+                            if let Ok(x_val) = evt.value.parse::<f32>() {
+                                let (x_ratio, y_ratio) = (ratio.0, ratio.1);
+                                if x_ratio.is_nan() || y_ratio.is_nan() {
+                                    return;
                                 }
-                                // let mut new_y = Sting::from("");
-                                // let y_ratio = ratio.1;
 
-                                // y_state.set(new_y);
-                            } else {
-                                println!("In y > x");
+                                // if X in ratio is 1.0, Y should be ratio.y of what is entered into X input.
+                                let y_val = if x_ratio > y_ratio {
+                                    println!("In x > y");
+
+                                    format!("{}", y_ratio * x_val)
+                                } else {
+                                    println!("In y > x");
+
+                                    let scale_up = y_ratio / x_ratio;
+                                    format!("{}", scale_up * x_val)
+                                };
+
+                                y_state.set(y_val);
                             }
                         },
                         placeholder: "Input X size",
@@ -191,8 +179,10 @@ fn app(cx: Scope) -> Element {
                     input {
                         class: "scaleinput radius",
                         oninput: move |evt| {
+                            y_state.set(evt.value.clone());
                             if evt.value.is_empty() {
                                 x_state.set(String::from(""));
+                                // return;
                             }
 
                         },
