@@ -7,7 +7,7 @@ fn get_input() -> String {
     input
 }
 
-fn get_resolution(url: &str) -> Result<(f32, f32), String> {
+fn get_resolution(url: &str) -> Result<(f64, f64), String> {
     let img_bytes = reqwest::blocking::get(url);
     if let Err(error) = img_bytes {
         let msg = format!("Failed getting url: \"{error:?}\"");
@@ -30,10 +30,10 @@ fn get_resolution(url: &str) -> Result<(f32, f32), String> {
     }
 
     let image = image.unwrap();
-    Ok((image.width() as f32, image.height() as f32))
+    Ok((image.width() as f64, image.height() as f64))
 }
 
-fn url_to_scaling(url: &str) -> Result<(f32, f32), String> {
+fn url_to_scaling(url: &str) -> Result<(f64, f64), String> {
     match get_resolution(url) {
         Err(error_msg) => Err(error_msg),
         Ok((width, height)) => {
@@ -82,9 +82,10 @@ fn main() {
 // https://stackoverflow.com/questions/42125775/reactjs-react-router-how-to-center-div
 
 // This link makes X greater than Y in the ratio: https://i.imgur.com/7XW1LdK.png
+
 // This link makes Y greater than X in the ratio: https://i.imgur.com/LEQ7AB5.png
 fn app(cx: Scope) -> Element {
-    let ratio = use_state(cx, || (f32::NAN, f32::NAN));
+    let ratio = use_state(cx, || (f64::NAN, f64::NAN));
 
     let x_state = use_state(cx, || String::from(""));
     let y_state = use_state(cx, || String::from(""));
@@ -110,7 +111,8 @@ fn app(cx: Scope) -> Element {
                 input {
                     class: "urlinput radius",
                     oninput: move |evt| {
-                        ratio.set((f32::NAN, f32::NAN));
+                        ratio.set((f64::NAN, f64::NAN));
+
                         match url_to_scaling(&evt.value) {
                             Err(error_msg) => println!("Failuring to resolve scaling: {error_msg}"),
                             Ok((x_scale, y_scale)) => {
@@ -143,7 +145,7 @@ fn app(cx: Scope) -> Element {
                                 return;
                             }
 
-                            if let Ok(x_val) = evt.value.parse::<f32>() {
+                            if let Ok(x_val) = evt.value.parse::<f64>() {
                                 let (x_ratio, y_ratio) = (ratio.0, ratio.1);
                                 if x_ratio.is_nan() || y_ratio.is_nan() {
                                     return;
