@@ -89,7 +89,7 @@ fn app(cx: Scope) -> Element {
                         y_state.set(String::from(""));
 
                         match url_to_scaling(&evt.value) {
-                            Err(error_msg) => println!("Failing to resolve scaling: {error_msg}"),
+                            Err(_error_msg) => (), //println!("Failing to resolve scaling: {_error_msg}"),
                             Ok((x_scale, y_scale)) => {
                                 ratio.set((x_scale, y_scale));
 
