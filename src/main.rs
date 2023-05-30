@@ -1,12 +1,5 @@
 use dioxus::prelude::*;
 
-fn get_input() -> String {
-    let mut input = String::from("");
-    std::io::stdin().read_line(&mut input).unwrap();
-
-    input
-}
-
 fn get_resolution(url: &str) -> Result<(f64, f64), String> {
     let img_bytes = reqwest::blocking::get(url);
     if let Err(error) = img_bytes {
@@ -54,25 +47,6 @@ fn url_to_scaling(url: &str) -> Result<(f64, f64), String> {
 
 fn main() {
     dioxus_desktop::launch(app);
-
-    println!("Ctrl C to close anytime");
-    println!("Imgur URLs provably known to work, other URLs may fail\n");
-
-    loop {
-        println!("Provide an image URL: ");
-        let input = get_input();
-
-        match url_to_scaling(&input) {
-            Err(error_msg) => println!("{error_msg}\n"),
-            Ok((x_scale, y_scale)) => {
-                if x_scale == 1.0 {
-                    println!("Scale Y dimensions by {y_scale}");
-                } else {
-                    println!("Scale X dimensions by {x_scale}");
-                }
-            }
-        }
-    }
 }
 
 // Seem to require to look up how JSX does things.
