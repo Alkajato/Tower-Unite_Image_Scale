@@ -82,7 +82,6 @@ fn main() {
 // https://stackoverflow.com/questions/42125775/reactjs-react-router-how-to-center-div
 
 // This link makes X greater than Y in the ratio: https://i.imgur.com/7XW1LdK.png
-
 // This link makes Y greater than X in the ratio: https://i.imgur.com/LEQ7AB5.png
 fn app(cx: Scope) -> Element {
     let ratio = use_state(cx, || (f64::NAN, f64::NAN));
@@ -140,25 +139,21 @@ fn app(cx: Scope) -> Element {
                         class: "scaleinput radius",
                         oninput: move |evt| {
                             x_state.set(evt.value.clone());
+
                             if evt.value.is_empty() {
                                 y_state.set(String::from(""));
                                 return;
                             }
 
+                            let (x_ratio, y_ratio) = (ratio.0, ratio.1);
+                            if x_ratio.is_nan() || y_ratio.is_nan() {
+                                return;
+                            }
+
                             if let Ok(x_val) = evt.value.parse::<f64>() {
-                                let (x_ratio, y_ratio) = (ratio.0, ratio.1);
-                                if x_ratio.is_nan() || y_ratio.is_nan() {
-                                    return;
-                                }
-
-                                // if X in ratio is 1.0, Y should be ratio.y of what is entered into X input.
                                 let y_val = if x_ratio > y_ratio {
-                                    println!("In x > y");
-
                                     format!("{}", y_ratio * x_val)
                                 } else {
-                                    println!("In y > x");
-
                                     let scale_up = y_ratio / x_ratio;
                                     format!("{}", scale_up * x_val)
                                 };
@@ -181,11 +176,27 @@ fn app(cx: Scope) -> Element {
                         class: "scaleinput radius",
                         oninput: move |evt| {
                             y_state.set(evt.value.clone());
+
                             if evt.value.is_empty() {
                                 x_state.set(String::from(""));
-                                // return;
+                                return;
                             }
 
+                            let (x_ratio, y_ratio) = (ratio.0, ratio.1);
+                            if x_ratio.is_nan() || y_ratio.is_nan() {
+                                return;
+                            }
+
+                            if let Ok(y_val) = evt.value.parse::<f64>() {
+                                let x_val = if y_ratio > x_ratio {
+                                    format!("{}", x_ratio * y_val)
+                                } else {
+                                    let scale_up = x_ratio / y_ratio;
+                                    format!("{}", scale_up * y_val)
+                                };
+
+                                x_state.set(x_val);
+                            }
                         },
                         placeholder: "Input Y size",
                         value: "{y_state}",
