@@ -111,6 +111,8 @@ fn app(cx: Scope) -> Element {
                     class: "urlinput radius",
                     oninput: move |evt| {
                         ratio.set((f64::NAN, f64::NAN));
+                        x_state.set(String::from(""));
+                        y_state.set(String::from(""));
 
                         match url_to_scaling(&evt.value) {
                             Err(error_msg) => println!("Failing to resolve scaling: {error_msg}"),
