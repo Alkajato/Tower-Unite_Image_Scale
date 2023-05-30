@@ -93,7 +93,7 @@ fn app(cx: Scope) -> Element {
                             Ok((x_scale, y_scale)) => {
                                 ratio.set((x_scale, y_scale));
 
-                                println!("Evaluating {:?}", (x_scale, y_scale));
+                                // println!("Evaluating {:?}", (x_scale, y_scale));
                             }
                         }
                     },
