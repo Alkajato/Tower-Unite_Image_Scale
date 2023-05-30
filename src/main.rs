@@ -154,10 +154,10 @@ fn app(cx: Scope) -> Element {
 
                             if let Ok(x_val) = evt.value.parse::<f64>() {
                                 let y_val = if x_ratio > y_ratio {
-                                    format!("{}", y_ratio * x_val)
+                                    format!("{:.2}", y_ratio * x_val)
                                 } else {
                                     let scale_up = y_ratio / x_ratio;
-                                    format!("{}", scale_up * x_val)
+                                    format!("{:.2}", scale_up * x_val)
                                 };
 
                                 y_state.set(y_val);
@@ -191,10 +191,10 @@ fn app(cx: Scope) -> Element {
 
                             if let Ok(y_val) = evt.value.parse::<f64>() {
                                 let x_val = if y_ratio > x_ratio {
-                                    format!("{}", x_ratio * y_val)
+                                    format!("{:.2}", x_ratio * y_val)
                                 } else {
                                     let scale_up = x_ratio / y_ratio;
-                                    format!("{}", scale_up * y_val)
+                                    format!("{:.2}", scale_up * y_val)
                                 };
 
                                 x_state.set(x_val);
